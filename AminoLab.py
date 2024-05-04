@@ -113,21 +113,21 @@ class AminoLab():
         data = {"content": message,"stickerId": None,"type": 0,"timestamp": int(time() * 1000)}
         if user_Id:
             data["eventSource"] = "UserProfileView"
-            async with self.session.post(f"{self.api_p}/{patch}/user-profile/{userId}/g-comment",json=data,headers=headers.Headers(data=dumps(data)).headers_v2) as request:
+            async with self.session.post(f"{self.api_p}/{patch}/user-profile/{user_Id}/g-comment",json=data,headers=headers.Headers(data=dumps(data)).headers_v2) as request:
             	return await request.json()
 
         elif blog_Id:
             data["eventSource"] = "PostDetailView"
             data = json.dumps(data)
             
-            async with self.session.post(f"{self.api_p}/{patch}/blog/{blogId}/g-comment",json=data,headers=headers.Headers(data=dumps(data)).headers_v2) as request:
+            async with self.session.post(f"{self.api_p}/{patch}/blog/{blog_Id}/g-comment",json=data,headers=headers.Headers(data=dumps(data)).headers_v2) as request:
             	return await request.json()
 
         elif wiki_Id:
             data["eventSource"] = "PostDetailView"
             data = json.dumps(data)
             
-            async with self.session.post(f"{self.api_p}/{patch}/item/{wikiId}/g-comment",json=data,headers=headers.Headers(data=dumps(data)).headers_v2) as request:
+            async with self.session.post(f"{self.api_p}/{patch}/item/{wiki_Id}/g-comment",json=data,headers=headers.Headers(data=dumps(data)).headers_v2) as request:
             	return await request.json()
 
     # get supported languages list
@@ -228,7 +228,7 @@ class AminoLab():
         if blogId:
             if isinstance(blogId, str):
                 data["eventSource"] = "UserProfileView"
-                async with self.session.post(f"{self.api_p}/{patch}/blog/{blogId}/g-vote?cv=1.2",json=data,headers=headers.Headers(data=dumps(data)).headers_v2) as request:
+                async with self.session.post(f"{self.api_p}/{patch}/blog/{blog_Id}/g-vote?cv=1.2",json=data,headers=headers.Headers(data=dumps(data)).headers_v2) as request:
                 	return await request.json()
 
             elif isinstance(blogId, list):
@@ -239,17 +239,17 @@ class AminoLab():
 
         elif wikiId:
             data["eventSource"] = "PostDetailView"
-            async with self.session.post(f"{self.api_p}/{patch}/item/{wikiId}/g-vote?cv=1.2",json=data,headers=headers.Headers(data=dumps(data)).headers_v2) as request:
+            async with self.session.post(f"{self.api_p}/{patch}/item/{wiki_Id}/g-vote?cv=1.2",json=data,headers=headers.Headers(data=dumps(data)).headers_v2) as request:
             	return await request.json()
     #
     async def unvote(self, ndc_Id, blog_Id: str = None, wiki_Id: str = None):
         if ndc_Id:patch=f"x{ndc_Id}/s"
         else:patch="g/s"
-        if blogId:
-        	async with self.session.delete(f"{self.api_p}/g/s/blog/{blogId}/g-vote?eventSource=UserProfileView", headers=self.headers_v2) as request:
+        if blog_Id:
+        	async with self.session.delete(f"{self.api_p}/g/s/blog/{blog_Id}/g-vote?eventSource=UserProfileView", headers=self.headers_v2) as request:
         		return await request.json()
-        elif wikiId:
-        	async with self.session.delete(f"{self.api_p}/g/s/item/{wikiId}/g-vote?eventSource=PostDetailView", headers=self.headers_v2) as request:
+        elif wiki_Id:
+        	async with self.session.delete(f"{self.api_p}/g/s/item/{wiki_Id}/g-vote?eventSource=PostDetailView", headers=self.headers_v2) as request:
         		return await request.json()
 
     # get community blogs list
