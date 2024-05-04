@@ -4,7 +4,7 @@ Async library for aminoapps.com
 #Login
 ```python3
 import AminoLab,asyncio
-def main():
+async def main():
 	client = AminoLab.AminoLab()
 	email = input("Email >> ")
 	password = input("Password >> ")
