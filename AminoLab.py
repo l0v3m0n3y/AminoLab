@@ -1,10 +1,11 @@
 # Library In Development created by l0v3m0n3y
 # I have not tested some functions.
 import asyncio,aiohttp,base64,random,time
+from functools import reduce
 from time import time
 from typing import BinaryIO, Union
 import headers, objects, exception
-from json import dumps
+from json import dumps,loads
 
 class AminoLab():
     def __init__(self):
@@ -24,6 +25,14 @@ class AminoLab():
              	loop.run_until_complete(self._close_session())
     async def _close_session(self):
     	if not self.session.closed: await self.session.close()
+    async def auth_sid(self,sid):
+    	data = loads(base64.b64decode(reduce(lambda a, e: a.replace(*e), ("-+","_/"),sid + "=" * (-len(sid) % 4)).encode())[1:-20].decode())
+    	self.sid = sid
+    	self.user_Id =data["2"]
+    	headers.sid = self.sid
+    	headers.user_Id = self.user_Id
+    	self.headers = headers.Headers(sid=self.sid).headers
+    	self.headers_v2 = headers.Headers(sid=self.sid).headers_v2
     async def auth(self, email: str = None, phone: str = None, password: str = None,secret:str=None):
         data ={
 			"v": 2,
@@ -55,6 +64,8 @@ class AminoLab():
         async with self.session.post(f"{self.api_p}/g/s/auth/logout", json=data,headers=headers.Headers(data=dumps(data)).headers_v2) as requests:
         	self.sid = None
         	self.user_Id = None
+        	self.headers = None
+        	self.headers_v2 =None
         	return response.status_code
 
     # get public chats list
@@ -139,12 +150,12 @@ class AminoLab():
         if ndc_Id:patch=f"x{ndc_Id}/s"
         else:patch="g/s"
         async with self.session.post(f"{self.api_p}/{patch}/chat/thread/{thread_Id}/member/{self.user_Id}",headers=self.headers_v2) as request:
-        	return await request.status_code
+        	return await request.json()
     async def leave_thread(self, ndc_Id, thread_Id):
         if ndc_Id:patch=f"x{ndc_Id}/s"
         else:patch="g/s"
         async with self.session.post(f"{self.api_p}/{patch}/chat/thread/{thread_Id}/member/{self.user_Id}",headers=self.headers_v2) as request:
-        	return await request.status_code
+        	return await request.json()
 
     # get online users
     async def get_online_members(self, ndc_Id: str, start: int = 0, size: int = 10):
@@ -226,31 +237,33 @@ class AminoLab():
             "timestamp": int(time() * 1000)
         }
 
-        if blogId:
-            if isinstance(blogId, str):
+        if ndc_Id:patch=f"x{ndc_Id}/s"
+        else:patch="g/s"
+        if blog_Id:
+            if isinstance(blog_Id, str):
                 data["eventSource"] = "UserProfileView"
-                async with self.session.post(f"{self.api_p}/{patch}/blog/{blogId}/g-vote?cv=1.2",json=data,headers=headers.Headers(data=dumps(data)).headers_v2) as request:
+                async with self.session.post(f"{self.api_p}/{patch}/blog/{blog_Id}/g-vote?cv=1.2",json=data,headers=headers.Headers(data=dumps(data)).headers_v2) as request:
                 	return await request.json()
 
-            elif isinstance(blogId, list):
-                data["targetIdList"] = blogId
+            elif isinstance(blog_Id, list):
+                data["targetIdList"] = blog_Id
                 async with self.session.post(f"{self.api_p}/{patch}/feed/g-vote",json=data,headers=headers.Headers(data=dumps(data)).headers_v2) as request:
                 	return await request.json()
             else: pass
 
-        elif wikiId:
+        elif wiki_Id:
             data["eventSource"] = "PostDetailView"
-            async with self.session.post(f"{self.api_p}/{patch}/item/{wikiId}/g-vote?cv=1.2",json=data,headers=headers.Headers(data=dumps(data)).headers_v2) as request:
+            async with self.session.post(f"{self.api_p}/{patch}/item/{wiki_Id}/g-vote?cv=1.2",json=data,headers=headers.Headers(data=dumps(data)).headers_v2) as request:
             	return await request.json()
     #
     async def unvote(self, ndc_Id, blog_Id: str = None, wiki_Id: str = None):
         if ndc_Id:patch=f"x{ndc_Id}/s"
         else:patch="g/s"
-        if blogId:
-        	async with self.session.delete(f"{self.api_p}/g/s/blog/{blogId}/g-vote?eventSource=UserProfileView", headers=self.headers_v2) as request:
+        if blog_Id:
+        	async with self.session.delete(f"{self.api_p}/g/s/blog/{blog_Id}/g-vote?eventSource=UserProfileView", headers=self.headers_v2) as request:
         		return await request.json()
-        elif wikiId:
-        	async with self.session.delete(f"{self.api_p}/g/s/item/{wikiId}/g-vote?eventSource=PostDetailView", headers=self.headers_v2) as request:
+        elif wiki_Id:
+        	async with self.session.delete(f"{self.api_p}/g/s/item/{wiki_Id}/g-vote?eventSource=PostDetailView", headers=self.headers_v2) as request:
         		return await request.json()
 
     # get community blogs list
