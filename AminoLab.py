@@ -62,14 +62,14 @@ class AminoLab():
         if ndc_Id:patch=f"x{ndc_Id}/s"
         else:patch="g/s"
         async with self.session.get(f"{self.api_p}/{patch}/chat/thread?type=public-all&filterType={type}&start={start}&size={size}",headers=self.headers_v2) as requests:
-        	json=await request.json()
+        	json=await requests.json()
         	return objects.ChatThreads(json["threadList"]).ChatThreads
 
     # get joined chats list
     async def my_chat_threads(self, ndc_Id, start: int = 0, size: int = 10):
         data = {"ndcId": f"x{ndc_Id}", "start": start, "size": size}
         async with self.session.get(f"{self.api}/my-chat-threads",params=data,headers=self.headers) as requests:
-        	json=await request.json()
+        	json=await requests.json()
         	return objects.ChatThreads(json["threadList"]).ChatThreads
 
     #
@@ -228,7 +228,7 @@ class AminoLab():
         if blogId:
             if isinstance(blogId, str):
                 data["eventSource"] = "UserProfileView"
-                async with self.session.post(f"{self.api_p}/{patch}/blog/{blog_Id}/g-vote?cv=1.2",json=data,headers=headers.Headers(data=dumps(data)).headers_v2) as request:
+                async with self.session.post(f"{self.api_p}/{patch}/blog/{blogId}/g-vote?cv=1.2",json=data,headers=headers.Headers(data=dumps(data)).headers_v2) as request:
                 	return await request.json()
 
             elif isinstance(blogId, list):
@@ -239,17 +239,17 @@ class AminoLab():
 
         elif wikiId:
             data["eventSource"] = "PostDetailView"
-            async with self.session.post(f"{self.api_p}/{patch}/item/{wiki_Id}/g-vote?cv=1.2",json=data,headers=headers.Headers(data=dumps(data)).headers_v2) as request:
+            async with self.session.post(f"{self.api_p}/{patch}/item/{wikiId}/g-vote?cv=1.2",json=data,headers=headers.Headers(data=dumps(data)).headers_v2) as request:
             	return await request.json()
     #
     async def unvote(self, ndc_Id, blog_Id: str = None, wiki_Id: str = None):
         if ndc_Id:patch=f"x{ndc_Id}/s"
         else:patch="g/s"
-        if blog_Id:
-        	async with self.session.delete(f"{self.api_p}/g/s/blog/{blog_Id}/g-vote?eventSource=UserProfileView", headers=self.headers_v2) as request:
+        if blogId:
+        	async with self.session.delete(f"{self.api_p}/g/s/blog/{blogId}/g-vote?eventSource=UserProfileView", headers=self.headers_v2) as request:
         		return await request.json()
-        elif wiki_Id:
-        	async with self.session.delete(f"{self.api_p}/g/s/item/{wiki_Id}/g-vote?eventSource=PostDetailView", headers=self.headers_v2) as request:
+        elif wikiId:
+        	async with self.session.delete(f"{self.api_p}/g/s/item/{wikiId}/g-vote?eventSource=PostDetailView", headers=self.headers_v2) as request:
         		return await request.json()
 
     # get community blogs list
