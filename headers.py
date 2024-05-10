@@ -34,7 +34,7 @@ class Headers:
 		"NDCLANG": language.lower(),
 		"Accept-Language": f"{language.lower()}-{language.upper()}",
 		"User-Agent": user_agent,
-		"Content-Type": "application/json",
+		"Content-Type": "application/x-www-form-urlencoded",
 		"Host": "service.aminoapps.com",
 		"Accept-Encoding": "identity",
 		"Accept": "*/*",

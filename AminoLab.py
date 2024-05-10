@@ -67,8 +67,9 @@ class AminoLab():
 
     # get joined chats list
     async def my_chat_threads(self, ndc_Id, start: int = 0, size: int = 10):
-        data = {"ndcId": f"x{ndc_Id}", "start": start, "size": size}
-        async with self.session.get(f"{self.api}/my-chat-threads",params=data,headers=self.headers) as requests:
+        if ndc_Id:patch=f"x{ndc_Id}/s"
+        else:patch="g/s"
+        async with self.session.get(f"{self.api_p}/{patch}/chat/thread?type=joined-me&start={start}&size={size}",headers=self.headers_v2) as requests:
         	json=await requests.json()
         	return objects.ChatThreads(json["threadList"]).ChatThreads
 
