@@ -43,5 +43,5 @@ class Headers:
         if data:
         	self.headers_v2["Content-Length"] = str(len(data))
         	self.headers_v2["NDC-MSG-SIG"] = signature(data=data)
-        if sid:self.headers_v2["NDCAUTH"] = sid
+        if sid:self.headers_v2["NDCAUTH"] = f"sid={sid}"
         if user_Id:self.headers_v2["AUID"] = user_Id
