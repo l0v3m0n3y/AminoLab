@@ -34,7 +34,6 @@ class Headers:
 		"NDCLANG": language.lower(),
 		"Accept-Language": f"{language.lower()}-{language.upper()}",
 		"User-Agent": user_agent,
-		"Content-Type": "application/x-www-form-urlencoded",
 		"Host": "service.aminoapps.com",
 		"Accept-Encoding": "identity",
 		"Accept": "*/*",
@@ -42,6 +41,7 @@ class Headers:
 		}
         if data:
         	self.headers_v2["Content-Length"] = str(len(data))
+		self.headers_v2["Content-Type"]="application/json; charset=utf-8"
         	self.headers_v2["NDC-MSG-SIG"] = signature(data=data)
         if sid:self.headers_v2["NDCAUTH"] = f"sid={sid}"
         if user_Id:self.headers_v2["AUID"] = user_Id
