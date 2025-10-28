@@ -4,7 +4,7 @@ import asyncio,aiohttp,base64,random,time
 from functools import reduce
 from time import time
 from typing import BinaryIO, Union
-import headers, objects, exception
+from .utils import headers, objects, exception
 from json import dumps,loads
 
 class AminoLab():
